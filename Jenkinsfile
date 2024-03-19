@@ -97,7 +97,7 @@ pipeline {
             steps {
                 container('trivy') {
                     //sh 'trivy image $DOCKERHUB_REGISTRY:$REVISION -o trivy_$DOCKERHUB_REGISTRY:$REVISION'
-                    sh 'echo "artifacts" > trivy_$DOCKERHUB_REGISTRY:$REVISION'
+                    sh 'echo "artifacts" > trivy_$REVISION'
                 }
             }
         }
