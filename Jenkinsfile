@@ -19,6 +19,11 @@ pipeline {
             volumeMounts:
              - mountPath: /var/run/docker.sock
                name: docker-sock
+          - name: trivy
+            image: aquasec/trivy
+            command:
+            - cat
+            tty: true
           volumes:
           - name: docker-sock
             hostPath:
@@ -88,6 +93,18 @@ pipeline {
             }
         }
 
+        stage('Security Analysis Docker Image using trivy') {
+            steps {
+                container('trivy') {
+                    sh 'trivy image $DOCKERHUB_REGISTRY:$REVISION -o trivy_$DOCKERHUB_REGISTRY:$REVISION'
+                }
+            }
+        }
 
+        post {
+            always {
+                archiveArtifacts artifacts: 'trivy_$DOCKERHUB_REGISTRY:$REVISION', onlyIfSuccessful: true
+            }
+        }
     }
 }
