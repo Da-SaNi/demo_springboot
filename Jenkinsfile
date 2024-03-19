@@ -100,11 +100,11 @@ pipeline {
                 }
             }
         }
+    }
 
-        post {
-            always {
-                archiveArtifacts artifacts: 'trivy_$DOCKERHUB_REGISTRY:$REVISION', onlyIfSuccessful: true
-            }
+    post {
+        always {
+            archiveArtifacts artifacts: 'trivy_*', onlyIfSuccessful: true
         }
     }
 }
