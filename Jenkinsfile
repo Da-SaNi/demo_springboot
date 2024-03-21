@@ -104,7 +104,17 @@ pipeline {
                 container('trivy') {
                     sh 'wget https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/html.tpl'
                     sh 'trivy image $DOCKERHUB_REGISTRY:$REVISION --format template --template "@./html.tpl" -o trivy_$REVISION.html'
+                    publishHTML target : [
+                                allowMissing: true,
+                                alwaysLinkToLastBuild: true,
+                                keepAll: true,
+                                reportDir: 'reports',
+                                reportFiles: 'nodjs-scan.html',
+                                reportName: 'Trivy Scan',
+                                reportTitles: 'Trivy Scan'
+                                ]
                 }
+
             }
         }
     }
