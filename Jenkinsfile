@@ -96,7 +96,7 @@ pipeline {
         stage('Security Analysis Docker Image using trivy') {
             steps {
                 container('trivy') {
-                    sh 'trivy image $DOCKERHUB_REGISTRY:$REVISION --format template -o trivy_$REVISION.html'
+                    sh 'trivy image $DOCKERHUB_REGISTRY:$REVISION --format template --template "@contrib/html.tpl" -o trivy_$REVISION.html'
                     // sh 'echo "artifacts" > trivy_$REVISION'
                 }
             }
