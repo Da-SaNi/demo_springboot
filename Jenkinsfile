@@ -112,15 +112,6 @@ pipeline {
     post {
         always {
             archiveArtifacts artifacts: 'trivy_*', onlyIfSuccessful: true
-            publishHTML target : [
-                                   allowMissing: true,
-                                   alwaysLinkToLastBuild: true,
-                                   keepAll: true,
-                                   reportDir: 'archive',
-                                   reportFiles: 'trivy_$REVISION.html',
-                                   reportName: 'Trivy Scan',
-                                   reportTitles: 'Trivy Scan'
-                                 ]
         }
     }
 }
