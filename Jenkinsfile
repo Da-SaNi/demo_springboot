@@ -116,7 +116,7 @@ pipeline {
                                    allowMissing: true,
                                    alwaysLinkToLastBuild: true,
                                    keepAll: true,
-                                   reportDir: 'reports',
+                                   reportDir: 'htmlreports',
                                    reportFiles: 'trivy_$REVISION.html',
                                    reportName: 'Trivy Scan',
                                    reportTitles: 'Trivy Scan'
