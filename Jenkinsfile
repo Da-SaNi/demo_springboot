@@ -103,15 +103,6 @@ pipeline {
             steps {
                 container('trivy') {
                     sh 'trivy image $DOCKERHUB_REGISTRY:$REVISION --format template --template "@/contrib/html.tpl" -o trivy_$REVISION.html'
-                    publishHTML target : [
-                                allowMissing: true,
-                                alwaysLinkToLastBuild: true,
-                                keepAll: true,
-                                reportDir: 'reports',
-                                reportFiles: 'trivy_$REVISION.html',
-                                reportName: 'Trivy Scan',
-                                reportTitles: 'Trivy Scan'
-                                ]
                 }
 
             }
@@ -119,8 +110,17 @@ pipeline {
     }
 
     post {
-        success {
+        always {
             archiveArtifacts artifacts: 'trivy_*', onlyIfSuccessful: true
+            publishHTML target : [
+                                   allowMissing: true,
+                                   alwaysLinkToLastBuild: true,
+                                   keepAll: true,
+                                   reportDir: 'reports',
+                                   reportFiles: 'trivy_$REVISION.html',
+                                   reportName: 'Trivy Scan',
+                                   reportTitles: 'Trivy Scan'
+                                 ]
         }
     }
 }
