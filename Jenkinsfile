@@ -24,10 +24,16 @@ pipeline {
             command:
             - cat
             tty: true
+            volumeMounts:
+             - mountPath: "/root/.cache"
+               name: trivy-db
           volumes:
           - name: docker-sock
             hostPath:
               path: /var/run/docker.sock
+          - name: trivy-db
+            hostPath:
+              path: "/root/.cache"
         '''
       }
     }
