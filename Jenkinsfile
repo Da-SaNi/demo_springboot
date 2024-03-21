@@ -102,7 +102,8 @@ pipeline {
         stage('Security Analysis Docker Image using trivy') {
             steps {
                 container('trivy') {
-                    sh 'trivy image $DOCKERHUB_REGISTRY:$REVISION --format template --template "@/contrib/html.tpl" -o trivy_$REVISION.html'
+                    sh 'wget https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/html.tpl'
+                    sh 'trivy image $DOCKERHUB_REGISTRY:$REVISION --format template --template "@./html.tpl" -o trivy_$REVISION.html'
                 }
             }
         }
