@@ -113,7 +113,6 @@ pipeline {
                 container('trivy') {
                     sh 'trivy image $DOCKERHUB_REGISTRY:$REVISION --format template --template "@/contrib/html.tpl" -o trivy_$REVISION.html'
                 }
-
             }
         }
     }
