@@ -38,6 +38,10 @@ pipeline {
       }
     }
 
+    parameters {
+        string(name: 'REVISION', defaultValue: '1.0', description: 'Image Version')
+    }
+
     environment {
         DOCKERHUB_REGISTRY = 'innnnnwoo/springboot_test'
         DOCKERHUB_CREDENTIALS = credentials('docker_access_token')
