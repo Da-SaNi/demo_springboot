@@ -59,7 +59,7 @@ pipeline {
             }
 		}
 
-        stage('SonarQube Analysis') {
+        stage('Maven Build & SonarQube Analysis') {
             steps {
                 container('maven') {
                     withSonarQubeEnv('sonarqube-server') {
@@ -73,14 +73,6 @@ pipeline {
             steps {
                 timeout(time: 1, unit: 'MINUTES') {
                     waitForQualityGate abortPipeline: true
-                }
-            }
-        }
-
-        stage('Build-Jar-file') {
-            steps {
-                container('maven') {
-                    sh 'mvn package'
                 }
             }
         }
