@@ -60,7 +60,6 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 container('maven') {
-                    // sh 'mvn clean verify sonar:sonar -Dsonar.projectKey=demo_springboot -Dsonar.host.url=http://sonarqube-svc.sonarqube.svc.cluster.local:9000 -Dsonar.login=$SONARQUBE_TOKEN'
                     withSonarQubeEnv('sonarqube-server') {
                         sh 'mvn clean package sonar:sonar'
                     }
