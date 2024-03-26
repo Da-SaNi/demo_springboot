@@ -40,7 +40,6 @@ pipeline {
 
     environment {
         DOCKERHUB_REGISTRY = 'innnnnwoo/springboot_test'
-        REVISION = '2.0'
         DOCKERHUB_CREDENTIALS = credentials('docker_access_token')
     }
 
