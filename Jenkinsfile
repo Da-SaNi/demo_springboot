@@ -60,58 +60,14 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 container('maven') {
-                    sh 'mvn clean verify sonar:sonar -Dsonar.projectKey=demo_springboot -Dsonar.host.url=http://sonarqube-svc.sonarqube.svc.cluster.local:9000 -Dsonar.login=$SONARQUBE_TOKEN'
-                }
-            }
-        }
-
-        stage('Build-Jar-file') {
-            steps {
-                container('maven') {
-                    sh 'mvn package'
-                }
-            }
-        }
-
-        stage('Login Docker Hub') {
-            steps {
-                container('docker') {
-                    script {
-                        sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
+                    // sh 'mvn clean verify sonar:sonar -Dsonar.projectKey=demo_springboot -Dsonar.host.url=http://sonarqube-svc.sonarqube.svc.cluster.local:9000 -Dsonar.login=$SONARQUBE_TOKEN'
+                    withSonarQubeEnv('sonarqube-server') {
+                        sh 'mvn clean package sonar:sonar'
                     }
                 }
             }
         }
-
-        stage('Build Docker Image') {
-            steps {
-                container('docker') {
-                    sh 'docker build -t $DOCKERHUB_REGISTRY:$REVISION .'
-                }
-            }
-        }
-
-        stage('Push Docker Image') {
-            steps {
-                container('docker') {
-                    sh 'docker push $DOCKERHUB_REGISTRY:$REVISION'
-                }
-            }
-        }
-
-        stage('Security Analysis Docker Image using trivy') {
-            steps {
-                container('trivy') {
-                    sh 'trivy image $DOCKERHUB_REGISTRY:$REVISION --format template --template "@/contrib/html.tpl" -o trivy_$REVISION.html'
-                }
-
-            }
-        }
     }
 
-    post {
-        always {
-            archiveArtifacts artifacts: 'trivy_*', onlyIfSuccessful: true
-        }
-    }
+
 }
