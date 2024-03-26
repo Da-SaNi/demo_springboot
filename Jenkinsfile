@@ -42,7 +42,6 @@ pipeline {
         DOCKERHUB_REGISTRY = 'innnnnwoo/springboot_test'
         REVISION = '2.0'
         DOCKERHUB_CREDENTIALS = credentials('docker_access_token')
-        SONARQUBE_TOKEN = credentials('sonarqube_token')
     }
 
     stages {
@@ -73,6 +72,55 @@ pipeline {
                     waitForQualityGate abortPipeline: true
                 }
             }
+        }
+
+        stage('Build-Jar-file') {
+            steps {
+                container('maven') {
+                    sh 'mvn package'
+                }
+            }
+        }
+
+        stage('Login Docker Hub') {
+            steps {
+                container('docker') {
+                    script {
+                        sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
+                    }
+                }
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                container('docker') {
+                    sh 'docker build -t $DOCKERHUB_REGISTRY:$REVISION .'
+                }
+            }
+        }
+
+        stage('Push Docker Image') {
+            steps {
+                container('docker') {
+                    sh 'docker push $DOCKERHUB_REGISTRY:$REVISION'
+                }
+            }
+        }
+
+        stage('Security Analysis Docker Image using trivy') {
+            steps {
+                container('trivy') {
+                    sh 'trivy image $DOCKERHUB_REGISTRY:$REVISION --format template --template "@/contrib/html.tpl" -o trivy_$REVISION.html'
+                }
+
+            }
+        }
+    }
+
+    post {
+        always {
+            archiveArtifacts artifacts: 'trivy_*', onlyIfSuccessful: true
         }
     }
 }
